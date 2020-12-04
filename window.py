@@ -64,7 +64,7 @@ class MyGame(arcade.View):
         self.decor_list = arcade.SpriteList()
         self.ground_list = arcade.SpriteList()
         self.score = 0
-        self.gunshot_sound = music("Sounds\gunshot_1911.mp3")
+        self.gunshot_sound = arcade.sound.load_sound("Sounds\gunshot_1911.mp3")
         
         # Set up the player, specifically placing it at these coordinates.
         image_source = 'Images\pirate.png'
@@ -207,8 +207,7 @@ class MyGame(arcade.View):
 
         self.player_list.update_animation()
 
-        for enemy in self.enemy_list:
-            enemy.update_animation()
+        self.enemy_list.update_animation()
         PlayerCollide = arcade.check_for_collision_with_list(self.player_sprite, self.enemy_list)
         
         for collide in PlayerCollide:
@@ -403,7 +402,7 @@ class Enemy(arcade.Sprite):
             self.enemy_textures.append(arcade.load_texture("\Images\Walk.png",x = i * 150, y = 0, width= 150, height=150))'''
 
         self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150))
-        self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150,flipped_horizontally=True))
+        self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150, flipped_horizontally=True))
 
         self.enemy_damage = enemy_damage
         self.mv_speed = mv_speed
@@ -428,13 +427,13 @@ class Enemy(arcade.Sprite):
             self.character_face_direction = LEFT_FACING
         elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
             self.character_face_direction = RIGHT_FACING
-        
+        self.texture = self.enemy_textures[self.character_face_direction]
         '''self.cur_texture += 1
         if self.cur_texture > 4 * UPDATES_PER_FRAME:
             self.cur_texture = 0
         frame = self.cur_texture // UPDATES_PER_FRAME
         direction = self.character_face_direction'''
-        self.texture = self.enemy_textures[self.character_face_direction]
+        
 
 
 def main():
