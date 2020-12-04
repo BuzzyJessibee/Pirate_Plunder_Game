@@ -65,6 +65,8 @@ class MyGame(arcade.View):
         self.ground_list = arcade.SpriteList()
         self.score = 0
         self.gunshot_sound = arcade.sound.load_sound("Sounds\gunshot_1911.mp3")
+        self.heart = arcade.load_texture('Images\heart.png')
+        self.crosshair = arcade.Sprite('Images\cursor.png', 1)
         
         # Set up the player, specifically placing it at these coordinates.
         image_source = 'Images\pirate.png'
@@ -141,10 +143,12 @@ class MyGame(arcade.View):
         self.decor_list.draw()
         self.enemy_list.draw()
         self.bullet_list.draw()
+        self.crosshair.draw()
 
         # Put the health on the screen.
-        output = f"Health: {self.player_sprite.player_health}"
-        arcade.draw_text(output, 10, 630, arcade.color.WHITE, 14)
+        for i in range(self.player_sprite.player_health):
+            arcade.draw_scaled_texture_rectangle(30 + 35 * i, 615, self.heart, 1.5)
+        
 
         # Put the score on the screen.
         output = f"Score: {self.score}"
@@ -153,6 +157,10 @@ class MyGame(arcade.View):
             waveMsg = f"Wave {self.Wave}"
             arcade.draw_text(waveMsg, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.color.BLACK, 
                         font_size=75, anchor_x="center")
+
+    def on_mouse_motion(self,_x,_y,dx,dy):
+        self.crosshair.center_x = _x
+        self.crosshair.center_y = _y
 
     def on_mouse_press(self, x, y, button, modifiers):
         """ Called whenever the mouse button is clicked. """
@@ -346,6 +354,8 @@ class gameOver(arcade.View):
         arcade.draw_xywh_rectangle_filled(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT/2 - 50,200,50,arcade.color.BLACK)
         arcade.draw_text("RESTART", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50, arcade.color.WHITE, 
                         font_size=40, anchor_x="center")
+        arcade.draw_text("Score =", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 
+                        font_size=40, anchor_x="center")
     
     def on_mouse_press(self,_x,_y,_button,_modifiers):
         if _x < SCREEN_WIDTH/2 + 100 and _x > SCREEN_WIDTH/2 - 100 and _y < SCREEN_HEIGHT/2 and _y > SCREEN_HEIGHT/2 - 50:
@@ -357,7 +367,7 @@ class music(arcade.Sound):
     '''Plays the music'''
     def __init__(self, filename):
         super().__init__(filename)
-        self.play(.3)
+        self.play(.1)
 
 class Player(arcade.Sprite):
     ''''''
@@ -397,12 +407,15 @@ class Enemy(arcade.Sprite):
         self.scale = 1
         self.points = [[-32, -32], [32, -32], [32, 32], [-32, 32]]
         self.enemy_textures = []
+        self.frame = 0
 
-        '''for i in range(4):
-            self.enemy_textures.append(arcade.load_texture("\Images\Walk.png",x = i * 150, y = 0, width= 150, height=150))'''
-
-        self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150))
-        self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150, flipped_horizontally=True))
+        for i in range(4):
+            self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = i * 150, y = 0, width= 150, height=150))
+        for i in range(4):
+            self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = i * 150, y = 0, width= 150, height=150, flipped_horizontally=True))
+            
+        #self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150))
+        #self.enemy_textures.append(arcade.load_texture("Images\Walk.png",x = 150, y = 0, width= 150, height=150, flipped_horizontally=True))
 
         self.enemy_damage = enemy_damage
         self.mv_speed = mv_speed
@@ -417,22 +430,22 @@ class Enemy(arcade.Sprite):
 
         if self.center_x < player_sprite.center_x:
             self.center_x += min(self.mv_speed, player_sprite.center_x - self.center_x)
+            self.character_face_direction = RIGHT_FACING
         elif self.center_x > player_sprite.center_x:
             self.center_x -= min(self.mv_speed, self.center_x - player_sprite.center_x)
+            self.character_face_direction = LEFT_FACING
     
     def update_animation(self, delta_time: float = 1/60):
         # Figure out if we need to flip face left or right
-
-        if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
-            self.character_face_direction = LEFT_FACING
-        elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
-            self.character_face_direction = RIGHT_FACING
-        self.texture = self.enemy_textures[self.character_face_direction]
-        '''self.cur_texture += 1
-        if self.cur_texture > 4 * UPDATES_PER_FRAME:
+        if self.character_face_direction == LEFT_FACING:
+            self.texture = self.enemy_textures[self.frame + 4]
+        elif self.character_face_direction == RIGHT_FACING:
+            self.texture = self.enemy_textures[self.frame]
+        
+        self.cur_texture += 1
+        if self.cur_texture > 3 * UPDATES_PER_FRAME:
             self.cur_texture = 0
-        frame = self.cur_texture // UPDATES_PER_FRAME
-        direction = self.character_face_direction'''
+        self.frame = self.cur_texture // UPDATES_PER_FRAME
         
 
 
