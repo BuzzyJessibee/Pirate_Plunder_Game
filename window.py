@@ -53,7 +53,7 @@ class MyGame(arcade.View):
         self.tranistion_counter = 0
         self.gunshot_sound = None
 
-        arcade.set_background_color(arcade.csscolor.BLUE_VIOLET)
+        arcade.set_background_color(arcade.csscolor.SANDY_BROWN)
 
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
@@ -366,7 +366,7 @@ class Player(arcade.Sprite):
         self.cur_texture = 0
         self.scale = CHARACTER_SCALING
         self.points = [[-32, -32], [32, -32], [32, 32], [-32, 32]]
-        self.idle_texture_pair = load_texture_pair(f"Images\pirate.png")
+        self.player_textures = load_texture_pair(f"Images\pirate.png")
         self.player_health = 3
         self.is_invincible = False
 
@@ -386,7 +386,7 @@ class Player(arcade.Sprite):
             self.alpha = 255/2
         else:
             self.alpha = 255
-        self.texture = self.idle_texture_pair[self.character_face_direction]
+        self.texture = self.player_textures[self.character_face_direction]
 
 class Enemy(arcade.Sprite):
     def __init__(self, enemy_damage, mv_speed):
