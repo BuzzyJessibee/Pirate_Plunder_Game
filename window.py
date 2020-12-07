@@ -340,6 +340,7 @@ class mainMenu(arcade.View):
         self.bgm.stop()
         game = MyGame()
         game.setup()
+        self.window.set_mouse_visible = False
         self.window.show_view(game)
 
 class gameOver(arcade.View):
@@ -354,7 +355,8 @@ class gameOver(arcade.View):
         arcade.draw_xywh_rectangle_filled(SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT/2 - 50,200,50,arcade.color.BLACK)
         arcade.draw_text("RESTART", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50, arcade.color.WHITE, 
                         font_size=40, anchor_x="center")
-        arcade.draw_text("Score =", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 
+        output = "SCORE: "
+        arcade.draw_text(output, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 
                         font_size=40, anchor_x="center")
     
     def on_mouse_press(self,_x,_y,_button,_modifiers):
